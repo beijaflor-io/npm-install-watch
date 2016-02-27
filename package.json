@@ -1,0 +1,19 @@
+{
+  "name": "npm-install-watch",
+  "version": "1.0.0",
+  "description": "Watches a directory for changes and auto `npm install`s required dependencies that are missing.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/beijaflor-io/npm-install-watch.git"
+  },
+  "author": "Pedro Tacla Yamada",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/beijaflor-io/npm-install-watch/issues"
+  },
+  "homepage": "https://github.com/beijaflor-io/npm-install-watch#readme"
+}
