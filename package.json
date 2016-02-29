@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Watches a directory for changes and auto `npm install`s required dependencies that are missing.",
   "main": "index.js",
+  "bin": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
