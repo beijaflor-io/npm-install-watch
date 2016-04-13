@@ -1,9 +1,10 @@
 #!/usr/bin/env node
+var chalk = require('chalk');
+var child_process = require('child_process');
 var fs = require('fs');
 var path = require('path');
-var child_process = require('child_process');
-var chalk = require('chalk');
 var program = require('commander');
+var resolve = require('resolve');
 
 program
   .usage('npm-install-watch [options] ...TARGET')
@@ -17,6 +18,7 @@ program.args.forEach(function(target) {
 
 function createWatcher(target, isDirectory) {
   var watcher = fs.watch(target, {recursive: true});
+  var basedir = process.cwd();
 
   watcher.on('change', function(evt, filename) {
     console.log(chalk.blue('%s - %s'), evt, filename);
@@ -33,7 +35,7 @@ function createWatcher(target, isDirectory) {
     }
 
     if (isDirectory) filename = path.join(target, filename);
-    execute(filename);
+    execute(filename, basedir);
   });
 
   console.log(chalk.yellow('Watching for changes in %s'), target);
@@ -61,7 +63,7 @@ function findAllImports(string) {
   return findAll(regex, string);
 }
 
-function execute(filename) {
+function execute(filename, basedir) {
   var contents = fs.readFileSync(filename).toString();
 
   var imports = findAllImports(contents)
@@ -74,7 +76,7 @@ function execute(filename) {
 
     try {
       process.stdout.write(
-        chalk.gray('Found ' + i + ' at ' + require.resolve(i) + '\n')
+        chalk.gray('Found ' + i + ' at ' + resolve.sync(i, {basedir: basedir}) + '\n')
       );
     } catch(err) {
       process.stdout.write('\n');
