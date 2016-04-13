@@ -82,7 +82,10 @@ function execute(filename, basedir) {
       process.stdout.write('\n');
       console.log(chalk.blue('Installing missing dependency %s...'), i);
       console.log(chalk.gray('     $ npm install %s'), i);
-      child_process.execSync('npm install ' + i, {stdio: 'inherit'});
+      child_process.execSync('npm install ' + i, {
+        stdio: 'inherit',
+        cwd: basedir,
+      });
     }
   });
 }
