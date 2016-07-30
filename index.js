@@ -16,13 +16,17 @@ program.args.forEach(function(target) {
   createWatcher(target, stat.isDirectory());
 });
 
+function onError(err) {
+  console.log(chalk.red('%s'), err.message);
+}
+
 function createWatcher(target, isDirectory) {
   var watcher = fs.watch(target, {recursive: true});
   var basedir = process.cwd();
 
-  watcher.on('change', function(evt, filename) {
-    console.log(chalk.blue('%s - %s'), evt, filename);
+  watcher.on('error', onError);
 
+  watcher.on('change', function(evt, filename) {
     if (filename && filename.charAt(filename.length - 1) === '~') {
       filename = filename.slice(0, -1);
     }
@@ -30,12 +34,17 @@ function createWatcher(target, isDirectory) {
     if (path.basename(filename).indexOf('.') === 0 ||
         path.extname(filename) !== '.js' ||
         !filename) {
-      console.log(chalk.yellow('Ignoring event %s on %s'), evt, filename);
+      // console.log(chalk.yellow('Ignoring event %s on %s'), evt, filename);
       return;
     }
 
+    console.log(chalk.blue('%s - %s'), evt, filename);
     if (isDirectory) filename = path.join(target, filename);
-    execute(filename, basedir);
+    try {
+      execute(filename, basedir);
+    } catch(err) {
+      onError(err);
+    }
   });
 
   console.log(chalk.yellow('Watching for changes in %s'), target);
@@ -82,9 +91,11 @@ function execute(filename, basedir) {
       process.stdout.write('\n');
       console.log(chalk.blue('Installing missing dependency %s...'), i);
       console.log(chalk.gray('     $ npm install %s'), i);
-      child_process.execSync('npm install ' + i, {
+      child_process.exec('npm install ' + i, {
         stdio: 'inherit',
         cwd: basedir,
+      }, (err) => {
+        onError(err);
       });
     }
   });
